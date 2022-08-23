@@ -72,18 +72,18 @@
  * Image attributes
 **/
 typedef struct {
-    UBYTE *Image;
-    UWORD Width;
-    UWORD Height;
-    UWORD WidthMemory;
-    UWORD HeightMemory;
-    UWORD Color;
-    UWORD Rotate;
-    UWORD Mirror;
-    UWORD WidthByte;
-    UWORD HeightByte;
-    UWORD BitsPerPixel;
-    UWORD GrayScale;
+    uint8_t *Image;
+    uint16_t Width;
+    uint16_t Height;
+    uint16_t WidthMemory;
+    uint16_t HeightMemory;
+    uint16_t Color;
+    uint16_t Rotate;
+    uint16_t Mirror;
+    uint16_t WidthByte;
+    uint16_t HeightByte;
+    uint16_t BitsPerPixel;
+    uint16_t GrayScale;
 } PAINT;
 extern PAINT Paint;
 
@@ -181,39 +181,39 @@ typedef enum {
  * Custom structure of a time attribute
 **/
 typedef struct {
-    UWORD Year;  //0000
-    UBYTE  Month; //1 - 12
-    UBYTE  Day;   //1 - 30
-    UBYTE  Hour;  //0 - 23
-    UBYTE  Min;   //0 - 59
-    UBYTE  Sec;   //0 - 59
+    uint16_t Year;  //0000
+    uint8_t  Month; //1 - 12
+    uint8_t  Day;   //1 - 30
+    uint8_t  Hour;  //0 - 23
+    uint8_t  Min;   //0 - 59
+    uint8_t  Sec;   //0 - 59
 } PAINT_TIME;
 extern PAINT_TIME sPaint_time;
 
 //init and Clear
-void Paint_NewImage(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate, UWORD Color);
-void Paint_SelectImage(UBYTE *image);
-void Paint_SetRotate(UWORD Rotate);
-void Paint_SetMirroring(UBYTE mirror);
-void Paint_SetBitsPerPixel(UBYTE bpp);
-void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color);
+void Paint_NewImage(uint8_t *image, uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t Color);
+void Paint_SelectImage(uint8_t *image);
+void Paint_SetRotate(uint16_t Rotate);
+void Paint_SetMirroring(uint8_t mirror);
+void Paint_SetBitsPerPixel(uint8_t bpp);
+void Paint_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color);
 
-void Paint_Clear(UWORD Color);
-void Paint_ClearWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color);
+void Paint_Clear(uint16_t Color);
+void Paint_ClearWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color);
 
 //Drawing
-void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color, DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_FillWay);
-void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style);
-void Paint_DrawRectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
-void Paint_DrawCircle(UWORD X_Center, UWORD Y_Center, UWORD Radius, UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
+void Paint_DrawPoint(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color, DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_FillWay);
+void Paint_DrawLine(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style);
+void Paint_DrawRectangle(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
+void Paint_DrawCircle(uint16_t X_Center, uint16_t Y_Center, uint16_t Radius, uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill);
 
 //Display string
-void Paint_DrawChar(UWORD Xstart, UWORD Ystart, const char Acsii_Char, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void Paint_DrawString_EN(UWORD Xstart, UWORD Ystart, const char * pString, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void Paint_DrawString_CN(UWORD Xstart, UWORD Ystart, const char * pString, cFONT* font, UWORD Color_Foreground, UWORD Color_Background);
-void Paint_DrawNum(UWORD Xpoint, UWORD Ypoint, int32_t Nummber, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
-void Paint_DrawTime(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font, UWORD Color_Foreground, UWORD Color_Background);
+void Paint_DrawChar(uint16_t Xstart, uint16_t Ystart, const char Acsii_Char, sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background);
+void Paint_DrawString_EN(uint16_t Xstart, uint16_t Ystart, const char * pString, sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background);
+void Paint_DrawString_CN(uint16_t Xstart, uint16_t Ystart, const char * pString, cFONT* font, uint16_t Color_Foreground, uint16_t Color_Background);
+void Paint_DrawNum(uint16_t Xpoint, uint16_t Ypoint, int32_t Nummber, sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background);
+void Paint_DrawTime(uint16_t Xstart, uint16_t Ystart, PAINT_TIME *pTime, sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background);
 
-void Paint_SetColor(UWORD x, UWORD y, UWORD color);
-void Paint_GetColor(UWORD color, UBYTE* arr_color);
+void Paint_SetColor(uint16_t x, uint16_t y, uint16_t color);
+void Paint_GetColor(uint16_t color, uint8_t* arr_color);
 #endif

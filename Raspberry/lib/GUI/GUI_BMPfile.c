@@ -49,24 +49,24 @@
 
 
 //global variables related to BMP picture display
-UBYTE *bmp_dst_buf = NULL;
-UBYTE *bmp_src_buf = NULL;
-UDOUBLE bmp_width, bmp_height;
-UBYTE  bmp_BitCount;
-UDOUBLE bytesPerLine;
-UDOUBLE imageSize;
-UDOUBLE skip;
+uint8_t *bmp_dst_buf = NULL;
+uint8_t *bmp_src_buf = NULL;
+uint32_t bmp_width, bmp_height;
+uint8_t  bmp_BitCount;
+uint32_t bytesPerLine;
+uint32_t imageSize;
+uint32_t skip;
 BMPRGBQUAD  palette[256];
-extern UBYTE isColor;
+extern uint8_t isColor;
 
-static void Bitmap_format_Matrix(UBYTE *dst,UBYTE *src)
+static void Bitmap_format_Matrix(uint8_t *dst,uint8_t *src)
 {
-    UDOUBLE i,j,k;
-    UBYTE *psrc = src;
-    UBYTE *pdst = dst;
-    UBYTE *p = psrc;
-    UBYTE temp;
-    UDOUBLE count;
+    uint32_t i,j,k;
+    uint8_t *psrc = src;
+    uint8_t *pdst = dst;
+    uint8_t *p = psrc;
+    uint8_t temp;
+    uint32_t count;
 
     //Since the bmp storage is from the back to the front, it needs to be converted in reverse order.
     switch(bmp_BitCount)
@@ -194,11 +194,11 @@ static void Bitmap_format_Matrix(UBYTE *dst,UBYTE *src)
     }
 }
 
-static void DrawMatrix(UWORD Xpos, UWORD Ypos,UWORD Width, UWORD High,const UBYTE* Matrix)
+static void DrawMatrix(uint16_t Xpos, uint16_t Ypos,uint16_t Width, uint16_t High,const uint8_t* Matrix)
 {
-    UWORD i,j,x,y;
-    UBYTE R,G,B;
-    UBYTE temp1,temp2;
+    uint16_t i,j,x,y;
+    uint8_t R,G,B;
+    uint8_t temp1,temp2;
     double Gray;
 
     for (y=0,j=Ypos;y<High;y++,j++)
@@ -248,15 +248,15 @@ static void DrawMatrix(UWORD Xpos, UWORD Ypos,UWORD Width, UWORD High,const UBYT
     }
 }
 
-UBYTE GUI_ReadBmp(const char *path, UWORD x, UWORD y)
+uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y)
 {
     //bmp file pointer
     FILE *fp;
     BMPFILEHEADER FileHead;
     BMPINFOHEADER InfoHead;
-    UDOUBLE total_length;
-    UBYTE *buf = NULL;
-    UDOUBLE ret = -1;
+    uint32_t total_length;
+    uint8_t *buf = NULL;
+    uint32_t ret = -1;
 
     fp = fopen(path,"rb");
     if (fp == NULL)
@@ -321,15 +321,15 @@ UBYTE GUI_ReadBmp(const char *path, UWORD x, UWORD y)
     bmp_BitCount = InfoHead.biBitCount;
 
     //This is old code, but allocate imageSize byte memory is more reasonable
-    bmp_src_buf = (UBYTE*)calloc(1,total_length);
-    //bmp_src_buf = (UBYTE*)calloc(1,imageSize);
+    bmp_src_buf = (uint8_t*)calloc(1,total_length);
+    //bmp_src_buf = (uint8_t*)calloc(1,imageSize);
     if(bmp_src_buf == NULL){
         Debug("Load > malloc bmp out of memory!\n");
         return -1;
     }
     //This is old code, but allocate imageSize byte memory is more reasonable
-    bmp_dst_buf = (UBYTE*)calloc(1,total_length);
-    //bmp_dst_buf = (UBYTE*)calloc(1,imageSize);
+    bmp_dst_buf = (uint8_t*)calloc(1,total_length);
+    //bmp_dst_buf = (uint8_t*)calloc(1,imageSize);
     if(bmp_dst_buf == NULL){
         Debug("Load > malloc bmp out of memory!\n");
         return -2;
@@ -347,7 +347,7 @@ UBYTE GUI_ReadBmp(const char *path, UWORD x, UWORD y)
             DEV_Delay_us(100);
             continue;
         }
-        buf = ((UBYTE*)buf) + ret;
+        buf = ((uint8_t*)buf) + ret;
         total_length = total_length - ret;
         if(total_length == 0)
             break;
@@ -367,7 +367,7 @@ UBYTE GUI_ReadBmp(const char *path, UWORD x, UWORD y)
 
             //this is old code, will likely result in memory leak if use 1bp source bmp image
 
-            bmp_dst_buf = (UBYTE*)calloc(1,InfoHead.biWidth * InfoHead.biHeight);
+            bmp_dst_buf = (uint8_t*)calloc(1,InfoHead.biWidth * InfoHead.biHeight);
             if(bmp_dst_buf == NULL)
             {
                 Debug("Load > malloc bmp out of memory!\n");
@@ -386,7 +386,7 @@ UBYTE GUI_ReadBmp(const char *path, UWORD x, UWORD y)
             }
             //this is old code, will likely result in memory leak if use 4bp source bmp image
 
-            bmp_dst_buf = (UBYTE*)calloc(1,InfoHead.biWidth * InfoHead.biHeight);
+            bmp_dst_buf = (uint8_t*)calloc(1,InfoHead.biWidth * InfoHead.biHeight);
             if(bmp_dst_buf == NULL)
             {
                 Debug("Load > malloc bmp out of memory!\n");

@@ -12,16 +12,16 @@
 #include "../lib/GUI/GUI_BMPfile.h"
 #include "../lib/Config/Debug.h"
 
-UBYTE *Refresh_Frame_Buf = NULL;
+uint8_t *Refresh_Frame_Buf = NULL;
 
-UBYTE *Panel_Frame_Buf = NULL;
-UBYTE *Panel_Area_Frame_Buf = NULL;
+uint8_t *Panel_Frame_Buf = NULL;
+uint8_t *Panel_Area_Frame_Buf = NULL;
 
 bool Four_Byte_Align = false;
 
 extern int epd_mode;
-extern UWORD VCOM;
-extern UBYTE isColor;
+extern uint16_t VCOM;
+extern uint8_t isColor;
 /******************************************************************************
 function: Change direction of display, Called after Paint_NewImage()
 parameter:
@@ -53,23 +53,23 @@ parameter:
     Panel_Height: Height of the panel
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
 ******************************************************************************/
-UBYTE Display_ColorPalette_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr){
-    UWORD In_4bp_Refresh_Area_Width;
+uint8_t Display_ColorPalette_Example(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Init_Target_Memory_Addr){
+    uint16_t In_4bp_Refresh_Area_Width;
     if(Four_Byte_Align == true){
         In_4bp_Refresh_Area_Width = Panel_Width - (Panel_Width % 32);
     }else{
         In_4bp_Refresh_Area_Width = Panel_Width;
     }
-    UWORD In_4bp_Refresh_Area_Height = Panel_Height/16;
+    uint16_t In_4bp_Refresh_Area_Height = Panel_Height/16;
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
     clock_t In_4bp_Refresh_Start, In_4bp_Refresh_Finish;
     double In_4bp_Refresh_Duration;
 
     Imagesize  = ((In_4bp_Refresh_Area_Width*4 % 8 == 0)? (In_4bp_Refresh_Area_Width*4 / 8 ): (In_4bp_Refresh_Area_Width*4 / 8 + 1)) * In_4bp_Refresh_Area_Height;
 
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for black memory...\r\n");
         return -1;
     }
@@ -77,7 +77,7 @@ UBYTE Display_ColorPalette_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBL
     Debug("Start to demostrate 4bpp palette example\r\n");
     In_4bp_Refresh_Start = clock();
 
-    UBYTE SixteenColorPattern[16] = {0xFF,0xEE,0xDD,0xCC,0xBB,0xAA,0x99,0x88,0x77,0x66,0x55,0x44,0x33,0x22,0x11,0x00};
+    uint8_t SixteenColorPattern[16] = {0xFF,0xEE,0xDD,0xCC,0xBB,0xAA,0x99,0x88,0x77,0x66,0x55,0x44,0x33,0x22,0x11,0x00};
 
     for(int i=0; i < 16; i++){
         memset(Refresh_Frame_Buf, SixteenColorPattern[i], Imagesize);
@@ -104,22 +104,22 @@ parameter:
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
     BitsPerPixel: Bits Per Pixel, 2^BitsPerPixel = grayscale
 ******************************************************************************/
-UBYTE Display_CharacterPattern_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr, UBYTE BitsPerPixel){
-    UWORD Display_Area_Width;
+uint8_t Display_CharacterPattern_Example(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Init_Target_Memory_Addr, uint8_t BitsPerPixel){
+    uint16_t Display_Area_Width;
     if(Four_Byte_Align == true){
         Display_Area_Width = Panel_Width - (Panel_Width % 32);
     }else{
         Display_Area_Width = Panel_Width;
     }
-    UWORD Display_Area_Height = Panel_Height;
+    uint16_t Display_Area_Height = Panel_Height;
 
-    UWORD Display_Area_Sub_Width = Display_Area_Width / 5;
-    UWORD Display_Area_Sub_Height = Display_Area_Height / 5;
+    uint16_t Display_Area_Sub_Width = Display_Area_Width / 5;
+    uint16_t Display_Area_Sub_Height = Display_Area_Height / 5;
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
     Imagesize = ((Display_Area_Width * BitsPerPixel % 8 == 0)? (Display_Area_Width * BitsPerPixel / 8 ): (Display_Area_Width * BitsPerPixel / 8 + 1)) * Display_Area_Height;
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for image memory...\r\n");
         return -1;
     }
@@ -184,19 +184,19 @@ parameter:
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
     BitsPerPixel: Bits Per Pixel, 2^BitsPerPixel = grayscale
 ******************************************************************************/
-UBYTE Display_BMP_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr, UBYTE BitsPerPixel){
-    UWORD WIDTH;
+uint8_t Display_BMP_Example(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Init_Target_Memory_Addr, uint8_t BitsPerPixel){
+    uint16_t WIDTH;
     if(Four_Byte_Align == true){
         WIDTH  = Panel_Width - (Panel_Width % 32);
     }else{
         WIDTH = Panel_Width;
     }
-    UWORD HEIGHT = Panel_Height;
+    uint16_t HEIGHT = Panel_Height;
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
     Imagesize = ((WIDTH * BitsPerPixel % 8 == 0)? (WIDTH * BitsPerPixel / 8 ): (WIDTH * BitsPerPixel / 8 + 1)) * HEIGHT;
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for black memory...\r\n");
         return -1;
     }
@@ -257,24 +257,24 @@ parameter:
     Dev_Info: Information structure read from IT8951
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
 ******************************************************************************/
-UBYTE Dynamic_Refresh_Example(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memory_Addr){
-    UWORD Panel_Width = Dev_Info.Panel_W;
-    UWORD Panel_Height = Dev_Info.Panel_H;
+uint8_t Dynamic_Refresh_Example(IT8951_Dev_Info Dev_Info, uint32_t Init_Target_Memory_Addr){
+    uint16_t Panel_Width = Dev_Info.Panel_W;
+    uint16_t Panel_Height = Dev_Info.Panel_H;
 
-    UWORD Dynamic_Area_Width = 96;
-    UWORD Dynamic_Area_Height = 48;
+    uint16_t Dynamic_Area_Width = 96;
+    uint16_t Dynamic_Area_Height = 48;
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
-    UWORD Start_X = 0,Start_Y = 0;
+    uint16_t Start_X = 0,Start_Y = 0;
 
-    UWORD Dynamic_Area_Count = 0;
+    uint16_t Dynamic_Area_Count = 0;
 
-    UWORD Repeat_Area_Times = 0;
+    uint16_t Repeat_Area_Times = 0;
 
     //malloc enough memory for 1bp picture first
     Imagesize = ((Panel_Width * 1 % 8 == 0)? (Panel_Width * 1 / 8 ): (Panel_Width * 1 / 8 + 1)) * Panel_Height;
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL){
+    if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL){
         Debug("Failed to apply for picture memory...\r\n");
         return -1;
     }
@@ -355,12 +355,12 @@ parameter:
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
     BitsPerPixel: Bits Per Pixel, 2^BitsPerPixel = grayscale
 ******************************************************************************/
-UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr){
+uint8_t Dynamic_GIF_Example(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Init_Target_Memory_Addr){
 
-    UWORD Animation_Start_X = 0;
-    UWORD Animation_Start_Y = 0;
-    UWORD Animation_Area_Width = 800;
-    UWORD Animation_Area_Height = 600;
+    uint16_t Animation_Start_X = 0;
+    uint16_t Animation_Start_Y = 0;
+    uint16_t Animation_Area_Width = 800;
+    uint16_t Animation_Area_Height = 600;
 
     if(Animation_Area_Width > Panel_Width){
         return -1;
@@ -369,23 +369,23 @@ UBYTE Dynamic_GIF_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Ta
         return -1;
     }
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
-    UBYTE Pic_Count = 0;
-    UBYTE Pic_Num = 7;
+    uint8_t Pic_Count = 0;
+    uint8_t Pic_Num = 7;
     char Path[30];
 
-    UDOUBLE Basical_Memory_Addr = Init_Target_Memory_Addr;
+    uint32_t Basical_Memory_Addr = Init_Target_Memory_Addr;
 
-    UDOUBLE Target_Memory_Addr = Basical_Memory_Addr;
-    UWORD Repeat_Animation_Times = 0;
+    uint32_t Target_Memory_Addr = Basical_Memory_Addr;
+    uint16_t Repeat_Animation_Times = 0;
 
     clock_t Animation_Test_Start, Animation_Test_Finish;
     double Animation_Test_Duration;
 
     Imagesize = ((Animation_Area_Width * 1 % 8 == 0)? (Animation_Area_Width * 1 / 8 ): (Animation_Area_Width * 1 / 8 + 1)) * Animation_Area_Height;
 
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL){
+    if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL){
         Debug("Failed to apply for image memory...\r\n");
         return -1;
     }
@@ -462,26 +462,26 @@ parameter:
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
     BitsPerPixel: Bits Per Pixel, 2^BitsPerPixel = grayscale
 ******************************************************************************/
-UBYTE Check_FrameRate_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Target_Memory_Addr, UBYTE BitsPerPixel){
-    UWORD Frame_Rate_Test_Width;
+uint8_t Check_FrameRate_Example(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Target_Memory_Addr, uint8_t BitsPerPixel){
+    uint16_t Frame_Rate_Test_Width;
     if(Four_Byte_Align == true){
         Frame_Rate_Test_Width = Panel_Width - (Panel_Width % 32);
     }else{
         Frame_Rate_Test_Width = Panel_Width;
     }
-    UWORD Frame_Rate_Test_Height = Panel_Height;
-    UDOUBLE Imagesize;
+    uint16_t Frame_Rate_Test_Height = Panel_Height;
+    uint32_t Imagesize;
 
-    UBYTE *Refresh_FrameRate_Buf = NULL;
+    uint8_t *Refresh_FrameRate_Buf = NULL;
 
-    UBYTE Count = 0;
+    uint8_t Count = 0;
 
     clock_t Frame_Rate_Test_Start, Frame_Rate_Test_Finish;
     double Frame_Rate_Test_Duration;
 
     Imagesize = ((Frame_Rate_Test_Width * BitsPerPixel % 8 == 0)? (Frame_Rate_Test_Width * BitsPerPixel / 8 ): (Frame_Rate_Test_Width * BitsPerPixel / 8 + 1)) * Frame_Rate_Test_Height;
 
-    if((Refresh_FrameRate_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Refresh_FrameRate_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for image memory...\r\n");
         return -1;
     }
@@ -563,31 +563,31 @@ parameter:
     Panel_Height: Height of the panel
     Init_Target_Memory_Addr: Memory address of IT8951 target memory address
 ******************************************************************************/
-UBYTE TouchPanel_ePaper_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr){
+uint8_t TouchPanel_ePaper_Example(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Init_Target_Memory_Addr){
     int ret,fd;
-    UWORD Touch_Pannel_Area_Width;
+    uint16_t Touch_Pannel_Area_Width;
     if(Four_Byte_Align == true){
         Touch_Pannel_Area_Width = Panel_Width - (Panel_Width % 32);
     }else{
         Touch_Pannel_Area_Width = Panel_Width;
     }
-    UWORD Touch_Pannel_Area_Height = Panel_Height;
+    uint16_t Touch_Pannel_Area_Height = Panel_Height;
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
-    UWORD Touch_Point0[2];
-    UWORD Touch_X = 0,Touch_Y = 0;
-    UWORD Touch_X_Old = 0,Touch_Y_Old = 0;
+    uint16_t Touch_Point0[2];
+    uint16_t Touch_X = 0,Touch_Y = 0;
+    uint16_t Touch_X_Old = 0,Touch_Y_Old = 0;
 
-    UWORD Min_X = Panel_Width, Max_X = 0;
-    UWORD Min_Y = Panel_Height, Max_Y = 0;
+    uint16_t Min_X = Panel_Width, Max_X = 0;
+    uint16_t Min_Y = Panel_Height, Max_Y = 0;
 
-    UWORD X_Start, X_End, Y_Start, Y_End, Width, Height;
+    uint16_t X_Start, X_End, Y_Start, Y_End, Width, Height;
 
-    UBYTE First_Point_Flag = 1;
+    uint8_t First_Point_Flag = 1;
 
-    UWORD Panel_Frame_Buf_WidthByte;
-    UWORD Panel_Area_Frame_Buf_WidthByte;
+    uint16_t Panel_Frame_Buf_WidthByte;
+    uint16_t Panel_Area_Frame_Buf_WidthByte;
 
     if(access("/home/pi/FIFO",F_OK)){
         ret = mkfifo("/home/pi/FIFO",0777);
@@ -607,13 +607,13 @@ UBYTE TouchPanel_ePaper_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE I
 
     Imagesize = ((Touch_Pannel_Area_Width * 1 % 8 == 0) ? (Touch_Pannel_Area_Width * 1 / 8 ): (Touch_Pannel_Area_Width *1 / 8 + 1)) * Touch_Pannel_Area_Height;
 
-    if((Panel_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Panel_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for Panel_Frame_Buf memory...\r\n");
         return -1;
     }
 
     //Assume the entire screen is refreshed
-    if((Panel_Area_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Panel_Area_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for Panel_Area_Frame_Buf memory...\r\n");
         return -1;
     }
@@ -732,21 +732,21 @@ UBYTE TouchPanel_ePaper_Example(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE I
 
 
 
-static UBYTE BMP_Test(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr, UBYTE BitsPerPixel, UBYTE Pic_Count)
+static uint8_t BMP_Test(uint16_t Panel_Width, uint16_t Panel_Height, uint32_t Init_Target_Memory_Addr, uint8_t BitsPerPixel, uint8_t Pic_Count)
 {
-    UWORD WIDTH;
+    uint16_t WIDTH;
 
     if(Four_Byte_Align == true){
         WIDTH  = Panel_Width - (Panel_Width % 32);
     }else{
         WIDTH = Panel_Width;
     }
-    UWORD HEIGHT = Panel_Height;
+    uint16_t HEIGHT = Panel_Height;
 
-    UDOUBLE Imagesize;
+    uint32_t Imagesize;
 
     Imagesize = ((WIDTH * BitsPerPixel % 8 == 0)? (WIDTH * BitsPerPixel / 8 ): (WIDTH * BitsPerPixel / 8 + 1)) * HEIGHT;
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL) {
+    if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize)) == NULL) {
         Debug("Failed to apply for black memory...\r\n");
         return -1;
     }
@@ -798,7 +798,7 @@ static UBYTE BMP_Test(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
 
 
 
-void Factory_Test_Only(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memory_Addr)
+void Factory_Test_Only(IT8951_Dev_Info Dev_Info, uint32_t Init_Target_Memory_Addr)
 {
     while(1)
     {
@@ -829,20 +829,20 @@ void Factory_Test_Only(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memory_Addr
     }
 }
 
-void Color_Test(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memory_Addr)
+void Color_Test(IT8951_Dev_Info Dev_Info, uint32_t Init_Target_Memory_Addr)
 {
     PAINT_TIME Time = {2020, 9, 30, 18, 10, 34};
 
     while(1)
     {
-        UWORD Panel_Width = Dev_Info.Panel_W;
-        UWORD Panel_Height = Dev_Info.Panel_H;
+        uint16_t Panel_Width = Dev_Info.Panel_W;
+        uint16_t Panel_Height = Dev_Info.Panel_H;
 
-        UDOUBLE Imagesize;
+        uint32_t Imagesize;
 
         //malloc enough memory for 1bp picture first
         Imagesize = ((Panel_Width * 1 % 8 == 0)? (Panel_Width * 1 / 8 ): (Panel_Width * 1 / 8 + 1)) * Panel_Height;
-        if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize*4)) == NULL) {
+        if((Refresh_Frame_Buf = (uint8_t *)malloc(Imagesize*4)) == NULL) {
             Debug("Failed to apply for picture memory...\r\n");
         }
 
@@ -873,8 +873,8 @@ void Color_Test(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memory_Addr)
             Paint_DrawNum(700, 500, 123456789, &Font24, 0x0a0f, 0x0fff);
             Paint_DrawTime(700, 600, &Time, &Font24, 0x0fa0, 0x0fff);
         }else {
-            for(UWORD j=0; j<14; j++) {
-                for(UWORD i=0; i<19; i++) {
+            for(uint16_t j=0; j<14; j++) {
+                for(uint16_t i=0; i<19; i++) {
                     Paint_DrawRectangle(i*72, j*72+1, (i+1)*72-1, (j+1)*72, (i+j*19)*15, DOT_PIXEL_1X1, DRAW_FILL_FULL);
                 }
             }

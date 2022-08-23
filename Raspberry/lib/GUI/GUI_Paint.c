@@ -70,7 +70,7 @@
 #include <math.h>
 
 PAINT Paint;
-UBYTE isColor = 0;
+uint8_t isColor = 0;
 /******************************************************************************
 function: Create Image
 parameter:
@@ -79,7 +79,7 @@ parameter:
     Height  :   The height of the picture
     Color   :   Whether the picture is inverted
 ******************************************************************************/
-void Paint_NewImage(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate, UWORD Color)
+void Paint_NewImage(uint8_t *image, uint16_t Width, uint16_t Height, uint16_t Rotate, uint16_t Color)
 {
     Paint.Image = NULL;
     Paint.Image = image;
@@ -109,7 +109,7 @@ function: Select Image
 parameter:
     image : Pointer to the image cache
 ******************************************************************************/
-void Paint_SelectImage(UBYTE *image)
+void Paint_SelectImage(uint8_t *image)
 {
     Paint.Image = image;
 }
@@ -119,7 +119,7 @@ function: Select Image Rotate
 parameter:
     Rotate : 0,90,180,270
 ******************************************************************************/
-void Paint_SetRotate(UWORD Rotate)
+void Paint_SetRotate(uint16_t Rotate)
 {
     if(Rotate == ROTATE_0 || Rotate == ROTATE_90 || Rotate == ROTATE_180 || Rotate == ROTATE_270) {
         Debug("Set image Rotate %d\r\n", Rotate);
@@ -134,7 +134,7 @@ function:    Select Image mirror
 parameter:
     mirror   :Not mirror,Horizontal mirror,Vertical mirror,Origin mirror
 ******************************************************************************/
-void Paint_SetMirroring(UBYTE mirror)
+void Paint_SetMirroring(uint8_t mirror)
 {
     if(mirror == MIRROR_NONE || mirror == MIRROR_HORIZONTAL ||
         mirror == MIRROR_VERTICAL || mirror == MIRROR_ORIGIN) {
@@ -153,7 +153,7 @@ parameter:
     Ypoint : At point Y
     Color  : Painted colors
 ******************************************************************************/
-void Paint_SetBitsPerPixel(UBYTE bpp)
+void Paint_SetBitsPerPixel(uint8_t bpp)
 {
     if(bpp == 8 || bpp == 4 || bpp == 2 || bpp == 1){
             Paint.BitsPerPixel = bpp;
@@ -173,13 +173,13 @@ parameter:
     Ypoint : At point Y
     Color  : Painted colors
 ******************************************************************************/
-void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
+void Paint_SetPixel(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color)
 {
     if(Xpoint > Paint.Width || Ypoint > Paint.Height){
         //Debug("Exceeding display boundaries\r\n");
         return;
     }
-    UWORD X, Y;
+    uint16_t X, Y;
 
     switch(Paint.Rotate) {
     case 0:
@@ -224,7 +224,7 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
         return;
     }
 
-    UDOUBLE Addr = X * (Paint.BitsPerPixel) / 8 + Y * Paint.WidthByte;
+    uint32_t Addr = X * (Paint.BitsPerPixel) / 8 + Y * Paint.WidthByte;
 
     switch( Paint.BitsPerPixel ){
         case 8:{
@@ -249,11 +249,11 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
     }
 }
 
-void Paint_SetColor(UWORD x, UWORD y, UWORD color)
+void Paint_SetColor(uint16_t x, uint16_t y, uint16_t color)
 {
-    UWORD arr_XY[2] = {x, y};
-    UBYTE arr_color[9];
-    UBYTE offset = x/3%3;
+    uint16_t arr_XY[2] = {x, y};
+    uint8_t arr_color[9];
+    uint8_t offset = x/3%3;
 
     if(x%3 != 1)
         (x%3==0) ? (arr_XY[0]++) : (arr_XY[0]--);
@@ -262,24 +262,24 @@ void Paint_SetColor(UWORD x, UWORD y, UWORD color)
     arr_XY[1] -= offset;
 
     Paint_GetColor(color, arr_color);
-    for(UBYTE i=0; i<3; i++) {
-        for(UBYTE j=0; j<3; j++) {
+    for(uint8_t i=0; i<3; i++) {
+        for(uint8_t j=0; j<3; j++) {
             Paint_SetPixel(arr_XY[0]-1+j, arr_XY[1]-1+i, arr_color[i*3+j]);
         }
     }
 }
 
-void Paint_GetColor(UWORD color, UBYTE* arr_color)
+void Paint_GetColor(uint16_t color, uint8_t* arr_color)
 {
-    UBYTE* p_color = arr_color;
-    UWORD R, G, B;
+    uint8_t* p_color = arr_color;
+    uint16_t R, G, B;
 
     B = (color>>4) & 0xf0;
     G =  color       & 0xf0;
     R = (color<<4) & 0xf0;
-    UBYTE temp[9] = {G, G, G/2, B, B, B/2, R, R, R/2};
+    uint8_t temp[9] = {G, G, G/2, B, B, B/2, R, R, R/2};
 
-    for(UBYTE t=0; t<9; t++) {
+    for(uint8_t t=0; t<9; t++) {
         p_color[t] = temp[t];
     }
 }
@@ -289,9 +289,9 @@ function: Clear the color of the picture
 parameter:
     Color : Painted colors
 ******************************************************************************/
-void Paint_Clear(UWORD Color)
+void Paint_Clear(uint16_t Color)
 {
-    UDOUBLE ImageSize = Paint.WidthByte * Paint.HeightByte;
+    uint32_t ImageSize = Paint.WidthByte * Paint.HeightByte;
     memset(Paint.Image, Color,  ImageSize);
 }
 
@@ -304,10 +304,10 @@ parameter:
     Yend   : y end point
     Color  : Painted colors
 ******************************************************************************/
-void Paint_ClearWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWORD Color)
+void Paint_ClearWindows(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend, uint16_t Color)
 {
-    for (UWORD Y = Ystart; Y < Yend; Y++) {
-        for (UWORD X = Xstart; X < Xend; X++) {
+    for (uint16_t Y = Ystart; Y < Yend; Y++) {
+        for (uint16_t X = Xstart; X < Xend; X++) {
             Paint_SetPixel(X, Y, Color);
         }
     }
@@ -322,7 +322,7 @@ parameter:
     Dot_Pixel    : point size
     Dot_Style    : point Style
 ******************************************************************************/
-void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color,
+void Paint_DrawPoint(uint16_t Xpoint, uint16_t Ypoint, uint16_t Color,
                      DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_Style)
 {
     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
@@ -366,8 +366,8 @@ parameter:
     Line_width : Line width
     Line_Style: Solid and dotted lines
 ******************************************************************************/
-void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
-                    UWORD Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style)
+void Paint_DrawLine(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend,
+                    uint16_t Color, DOT_PIXEL Line_width, LINE_STYLE Line_Style)
 {
     if (Xstart > Paint.Width || Ystart > Paint.Height ||
         Xend > Paint.Width || Yend > Paint.Height) {
@@ -375,8 +375,8 @@ void Paint_DrawLine(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
         return;
     }
 
-    UWORD Xpoint = Xstart;
-    UWORD Ypoint = Ystart;
+    uint16_t Xpoint = Xstart;
+    uint16_t Ypoint = Ystart;
     int dx = (int)Xend - (int)Xstart >= 0 ? Xend - Xstart : Xstart - Xend;
     int dy = (int)Yend - (int)Ystart <= 0 ? Yend - Ystart : Ystart - Yend;
 
@@ -424,8 +424,8 @@ parameter:
     Line_width: Line width
     Draw_Fill : Whether to fill the inside of the rectangle
 ******************************************************************************/
-void Paint_DrawRectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
-                         UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
+void Paint_DrawRectangle(uint16_t Xstart, uint16_t Ystart, uint16_t Xend, uint16_t Yend,
+                         uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
 {
     if (Xstart > Paint.Width || Ystart > Paint.Height ||
         Xend > Paint.Width || Yend > Paint.Height) {
@@ -434,7 +434,7 @@ void Paint_DrawRectangle(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend,
     }
 
     if (Draw_Fill) {
-        UWORD Ypoint;
+        uint16_t Ypoint;
         for(Ypoint = Ystart; Ypoint < Yend; Ypoint++) {
             Paint_DrawLine(Xstart, Ypoint, Xend, Ypoint, Color , Line_width, LINE_STYLE_SOLID);
         }
@@ -457,8 +457,8 @@ parameter:
     Line_width: Line width
     Draw_Fill : Whether to fill the inside of the Circle
 ******************************************************************************/
-void Paint_DrawCircle(UWORD X_Center, UWORD Y_Center, UWORD Radius,
-                      UWORD Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
+void Paint_DrawCircle(uint16_t X_Center, uint16_t Y_Center, uint16_t Radius,
+                      uint16_t Color, DOT_PIXEL Line_width, DRAW_FILL Draw_Fill)
 {
     if (X_Center > Paint.Width || Y_Center >= Paint.Height) {
         Debug("Paint_DrawCircle Input exceeds the normal display range\r\n");
@@ -526,10 +526,10 @@ parameter:
     Color_Foreground : Select the foreground color
     Color_Background : Select the background color
 ******************************************************************************/
-void Paint_DrawChar(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
-                    sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
+void Paint_DrawChar(uint16_t Xpoint, uint16_t Ypoint, const char Acsii_Char,
+                    sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background)
 {
-    UWORD Page, Column;
+    uint16_t Page, Column;
 
     if (Xpoint > Paint.Width || Ypoint > Paint.Height) {
         Debug("Paint_DrawChar Input exceeds the normal display range\r\n");
@@ -575,11 +575,11 @@ parameter:
     Color_Foreground : Select the foreground color
     Color_Background : Select the background color
 ******************************************************************************/
-void Paint_DrawString_EN(UWORD Xstart, UWORD Ystart, const char * pString,
-                         sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
+void Paint_DrawString_EN(uint16_t Xstart, uint16_t Ystart, const char * pString,
+                         sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background)
 {
-    UWORD Xpoint = Xstart;
-    UWORD Ypoint = Ystart;
+    uint16_t Xpoint = Xstart;
+    uint16_t Ypoint = Ystart;
 
     if (Xstart > Paint.Width || Ystart > Paint.Height) {
         Debug("Paint_DrawString_EN Input exceeds the normal display range\r\n");
@@ -620,8 +620,8 @@ parameter:
     Color_Foreground : Select the foreground color
     Color_Background : Select the background color
 ******************************************************************************/
-void Paint_DrawString_CN(UWORD Xstart, UWORD Ystart, const char * pString, cFONT* font,
-                        UWORD Color_Foreground, UWORD Color_Background)
+void Paint_DrawString_CN(uint16_t Xstart, uint16_t Ystart, const char * pString, cFONT* font,
+                        uint16_t Color_Foreground, uint16_t Color_Background)
 {
     const char* p_text = pString;
     int x = Xstart, y = Ystart;
@@ -716,8 +716,8 @@ parameter:
     Color_Background : Select the background color
 ******************************************************************************/
 #define  ARRAY_LEN 255
-void Paint_DrawNum(UWORD Xpoint, UWORD Ypoint, int32_t Nummber,
-                   sFONT* Font, UWORD Color_Foreground, UWORD Color_Background)
+void Paint_DrawNum(uint16_t Xpoint, uint16_t Ypoint, int32_t Nummber,
+                   sFONT* Font, uint16_t Color_Foreground, uint16_t Color_Background)
 {
 
     int16_t Num_Bit = 0, Str_Bit = 0;
@@ -757,12 +757,12 @@ parameter:
     Color_Foreground : Select the foreground color
     Color_Background : Select the background color
 ******************************************************************************/
-void Paint_DrawTime(UWORD Xstart, UWORD Ystart, PAINT_TIME *pTime, sFONT* Font,
-                    UWORD Color_Foreground, UWORD Color_Background)
+void Paint_DrawTime(uint16_t Xstart, uint16_t Ystart, PAINT_TIME *pTime, sFONT* Font,
+                    uint16_t Color_Foreground, uint16_t Color_Background)
 {
     uint8_t value[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-    UWORD Dx = Font->Width;
+    uint16_t Dx = Font->Width;
 
     //Write data into the cache
     Paint_DrawChar(Xstart                           , Ystart, value[pTime->Hour / 10], Font, Color_Foreground, Color_Background);

@@ -44,44 +44,44 @@
 
 #include "../Config/DEV_Config.h"
 
-extern UBYTE *bmp_dst_buf;
-extern UBYTE *bmp_src_buf;
+extern uint8_t *bmp_dst_buf;
+extern uint8_t *bmp_src_buf;
 
 /*Bitmap file header   14bit*/
 typedef struct
 {
-    UWORD bType;                        //File identifier, as for bmp is:0x4D42
-    UDOUBLE bSize;                      //The size of the file
-    UWORD brgbReversed1;                   //rgbReversed value, must be set to 0
-    UWORD brgbReversed2;                   //rgbReversed value, must be set to 0
-    UDOUBLE bOffset;                       //The offset from the beginning of the file header to the beginning of the image data bit
+    uint16_t bType;                        //File identifier, as for bmp is:0x4D42
+    uint32_t bSize;                      //The size of the file
+    uint16_t brgbReversed1;                   //rgbReversed value, must be set to 0
+    uint16_t brgbReversed2;                   //rgbReversed value, must be set to 0
+    uint32_t bOffset;                       //The offset from the beginning of the file header to the beginning of the image data bit
 }__attribute__((packed)) BMPFILEHEADER; //Tell the compiler to cancel optimal alignment of the structure during compilation
 
 
 /*Bitmap information header  40bit*/
 typedef struct
 {
-    UDOUBLE biInfoSize;                   //The size of the header: 40
-    UDOUBLE biWidth;                      //The width of the image
-    UDOUBLE biHeight;                      //The height of the image
-    UWORD biPlanes;                          //The number of target planes in the image
-    UWORD biBitCount;                      //The number of bits per pixel
-    UDOUBLE biCompression;                //Compression type
-    UDOUBLE bimpImageSize;                //The size of the image in bytes. The data must be a multiple of 4.
-    UDOUBLE biXPelsPerMeter;              //Number of horizontal pixel of the target device per meter
-    UDOUBLE biYPelsPerMeter;              //Number of vertical pixel of the target device per meter
-    UDOUBLE biClrUsed;                    //Number of colors for bitmap used in color palette
-    UDOUBLE biClrImportant;               //Specifies the number of important colors. When the value of this field is equal to the number of colors (or equal to 0), it means that all colors are equally important.
+    uint32_t biInfoSize;                   //The size of the header: 40
+    uint32_t biWidth;                      //The width of the image
+    uint32_t biHeight;                      //The height of the image
+    uint16_t biPlanes;                          //The number of target planes in the image
+    uint16_t biBitCount;                      //The number of bits per pixel
+    uint32_t biCompression;                //Compression type
+    uint32_t bimpImageSize;                //The size of the image in bytes. The data must be a multiple of 4.
+    uint32_t biXPelsPerMeter;              //Number of horizontal pixel of the target device per meter
+    uint32_t biYPelsPerMeter;              //Number of vertical pixel of the target device per meter
+    uint32_t biClrUsed;                    //Number of colors for bitmap used in color palette
+    uint32_t biClrImportant;               //Specifies the number of important colors. When the value of this field is equal to the number of colors (or equal to 0), it means that all colors are equally important.
 }__attribute__((packed)) BMPINFOHEADER;//Tell the compiler to cancel optimal alignment of the structure during compilation
 
 typedef struct
 {
-    UBYTE rgbBlue;                  //rgbBlue intensity
-    UBYTE rgbGreen;                 //rgbGreen intensity
-    UBYTE rgbRed;                   //rgbRed intensity
-    UBYTE rgbReversed;              //rgbReversed value
+    uint8_t rgbBlue;                  //rgbBlue intensity
+    uint8_t rgbGreen;                 //rgbGreen intensity
+    uint8_t rgbRed;                   //rgbRed intensity
+    uint8_t rgbReversed;              //rgbReversed value
 }__attribute__((packed)) BMPRGBQUAD;//Tell the compiler to cancel optimal alignment of the structure during compilation
 
-UBYTE GUI_ReadBmp(const char *path, UWORD x, UWORD y);
+uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y);
 
 #endif

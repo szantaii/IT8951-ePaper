@@ -70,26 +70,17 @@
 
 
 
-/**
- * data
-**/
-#define UBYTE   uint8_t
-#define UWORD   uint16_t
-#define UDOUBLE uint32_t
-
-
-
 /*------------------------------------------------------------------------------------------------------*/
-void DEV_Digital_Write(UWORD Pin, UBYTE Value);
-UBYTE DEV_Digital_Read(UWORD Pin);
+void DEV_Digital_Write(uint16_t Pin, uint8_t Value);
+uint8_t DEV_Digital_Read(uint16_t Pin);
 
-void DEV_SPI_WriteByte(UBYTE Value);
-UBYTE DEV_SPI_ReadByte();
+void DEV_SPI_WriteByte(uint8_t Value);
+uint8_t DEV_SPI_ReadByte();
 
-void DEV_Delay_ms(UDOUBLE xms);
-void DEV_Delay_us(UDOUBLE xus);
+void DEV_Delay_ms(uint32_t xms);
+void DEV_Delay_us(uint32_t xus);
 
-UBYTE DEV_Module_Init(void);
+uint8_t DEV_Module_Init(void);
 void DEV_Module_Exit(void);
 
 

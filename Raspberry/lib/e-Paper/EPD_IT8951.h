@@ -37,38 +37,38 @@
 
 
 // INIT mode, for every init or some time after A2 mode refresh
-extern UBYTE INIT_Mode;
+extern uint8_t INIT_Mode;
 // GC16 mode, for every time to display 16 grayscale image
-extern UBYTE GC16_Mode;
+extern uint8_t GC16_Mode;
 // A2 mode, for fast refresh without flash
-extern UBYTE A2_Mode;
+extern uint8_t A2_Mode;
 
 
 typedef struct IT8951_Load_Img_Info
 {
-    UWORD    Endian_Type;         //little or Big Endian
-    UWORD    Pixel_Format;        //bpp
-    UWORD    Rotate;              //Rotate mode
-    UBYTE*  Source_Buffer_Addr;  //Start address of source Frame buffer
-    UDOUBLE  Target_Memory_Addr;  //Base address of target image buffer
+    uint16_t    Endian_Type;         //little or Big Endian
+    uint16_t    Pixel_Format;        //bpp
+    uint16_t    Rotate;              //Rotate mode
+    uint8_t  *Source_Buffer_Addr;  //Start address of source Frame buffer
+    uint32_t  Target_Memory_Addr;  //Base address of target image buffer
 }IT8951_Load_Img_Info;
 
 typedef struct IT8951_Area_Img_Info
 {
-    UWORD Area_X;
-    UWORD Area_Y;
-    UWORD Area_W;
-    UWORD Area_H;
+    uint16_t Area_X;
+    uint16_t Area_Y;
+    uint16_t Area_W;
+    uint16_t Area_H;
 }IT8951_Area_Img_Info;
 
 typedef struct IT8951_Dev_Info
 {
-    UWORD Panel_W;
-    UWORD Panel_H;
-    UWORD Memory_Addr_L;
-    UWORD Memory_Addr_H;
-    UWORD FW_Version[8];
-    UWORD LUT_Version[8];
+    uint16_t Panel_W;
+    uint16_t Panel_H;
+    uint16_t Memory_Addr_L;
+    uint16_t Memory_Addr_H;
+    uint16_t FW_Version[8];
+    uint16_t LUT_Version[8];
 }IT8951_Dev_Info;
 
 /*-----------------------------------------------------------------------
@@ -156,17 +156,17 @@ void EPD_IT8951_SystemRun();
 void EPD_IT8951_Standby();
 void EPD_IT8951_Sleep();
 
-UWORD EPD_IT8951_ReadReg(UWORD Reg_Address);
-void EPD_IT8951_WriteReg(UWORD Reg_Address,UWORD Reg_Value);
-UWORD EPD_IT8951_GetVCOM(void);
-void EPD_IT8951_SetVCOM(UWORD VCOM);
+uint16_t EPD_IT8951_ReadReg(uint16_t Reg_Address);
+void EPD_IT8951_WriteReg(uint16_t Reg_Address,uint16_t Reg_Value);
+uint16_t EPD_IT8951_GetVCOM(void);
+void EPD_IT8951_SetVCOM(uint16_t VCOM);
 
 void EPD_IT8951_LoadImgStart( IT8951_Load_Img_Info* Load_Img_Info );
 void EPD_IT8951_LoadImgAreaStart( IT8951_Load_Img_Info* Load_Img_Info, IT8951_Area_Img_Info* Area_Img_Info );
 void EPD_IT8951_LoadImgEnd(void);
 
 void EPD_IT8951_GetSystemInfo(void* Buf);
-void EPD_IT8951_SetTargetMemoryAddr(UDOUBLE Target_Memory_Addr);
+void EPD_IT8951_SetTargetMemoryAddr(uint32_t Target_Memory_Addr);
 void EPD_IT8951_WaitForDisplayReady(void);
 
 
@@ -176,10 +176,10 @@ void EPD_IT8951_HostAreaPackedPixelWrite_1bp(IT8951_Load_Img_Info*Load_Img_Info,
 
 void EPD_IT8951_HostAreaPackedPixelWrite_2bp(IT8951_Load_Img_Info*Load_Img_Info,IT8951_Area_Img_Info*Area_Img_Info, bool Packed_Write);
 
-void EPD_IT8951_Display_Area(UWORD X,UWORD Y,UWORD W,UWORD H,UWORD Mode);
-void EPD_IT8951_Display_AreaBuf(UWORD X,UWORD Y,UWORD W,UWORD H,UWORD Mode, UDOUBLE Target_Memory_Addr);
+void EPD_IT8951_Display_Area(uint16_t X,uint16_t Y,uint16_t W,uint16_t H,uint16_t Mode);
+void EPD_IT8951_Display_AreaBuf(uint16_t X,uint16_t Y,uint16_t W,uint16_t H,uint16_t Mode, uint32_t Target_Memory_Addr);
 
-void EPD_IT8951_Display_1bp(UWORD X, UWORD Y, UWORD W, UWORD H, UWORD Mode,UDOUBLE Target_Memory_Addr, UBYTE Front_Gray_Val, UBYTE Back_Gray_Val);
+void EPD_IT8951_Display_1bp(uint16_t X, uint16_t Y, uint16_t W, uint16_t H, uint16_t Mode,uint32_t Target_Memory_Addr, uint8_t Front_Gray_Val, uint8_t Back_Gray_Val);
 */
 
 void Enhance_Driving_Capability(void);
@@ -190,19 +190,19 @@ void EPD_IT8951_Standby(void);
 
 void EPD_IT8951_Sleep(void);
 
-IT8951_Dev_Info EPD_IT8951_Init(UWORD VCOM);
+IT8951_Dev_Info EPD_IT8951_Init(uint16_t VCOM);
 
-void EPD_IT8951_Clear_Refresh(IT8951_Dev_Info Dev_Info,UDOUBLE Target_Memory_Addr, UWORD Mode);
+void EPD_IT8951_Clear_Refresh(IT8951_Dev_Info Dev_Info,uint32_t Target_Memory_Addr, uint16_t Mode);
 
-void EPD_IT8951_1bp_Refresh(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H, UBYTE Mode, UDOUBLE Target_Memory_Addr, bool Packed_Write);
-void EPD_IT8951_1bp_Multi_Frame_Write(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H,UDOUBLE Target_Memory_Addr, bool Packed_Write);
-void EPD_IT8951_1bp_Multi_Frame_Refresh(UWORD X, UWORD Y, UWORD W, UWORD H,UDOUBLE Target_Memory_Addr);
+void EPD_IT8951_1bp_Refresh(uint8_t* Frame_Buf, uint16_t X, uint16_t Y, uint16_t W, uint16_t H, uint8_t Mode, uint32_t Target_Memory_Addr, bool Packed_Write);
+void EPD_IT8951_1bp_Multi_Frame_Write(uint8_t* Frame_Buf, uint16_t X, uint16_t Y, uint16_t W, uint16_t H,uint32_t Target_Memory_Addr, bool Packed_Write);
+void EPD_IT8951_1bp_Multi_Frame_Refresh(uint16_t X, uint16_t Y, uint16_t W, uint16_t H,uint32_t Target_Memory_Addr);
 
-void EPD_IT8951_2bp_Refresh(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H, bool Hold, UDOUBLE Target_Memory_Addr, bool Packed_Write);
+void EPD_IT8951_2bp_Refresh(uint8_t* Frame_Buf, uint16_t X, uint16_t Y, uint16_t W, uint16_t H, bool Hold, uint32_t Target_Memory_Addr, bool Packed_Write);
 
-void EPD_IT8951_4bp_Refresh(UBYTE* Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H, bool Hold, UDOUBLE Target_Memory_Addr, bool Packed_Write);
+void EPD_IT8951_4bp_Refresh(uint8_t* Frame_Buf, uint16_t X, uint16_t Y, uint16_t W, uint16_t H, bool Hold, uint32_t Target_Memory_Addr, bool Packed_Write);
 
-void EPD_IT8951_8bp_Refresh(UBYTE *Frame_Buf, UWORD X, UWORD Y, UWORD W, UWORD H, bool Hold, UDOUBLE Target_Memory_Addr);
+void EPD_IT8951_8bp_Refresh(uint8_t *Frame_Buf, uint16_t X, uint16_t Y, uint16_t W, uint16_t H, bool Hold, uint32_t Target_Memory_Addr);
 
 
 

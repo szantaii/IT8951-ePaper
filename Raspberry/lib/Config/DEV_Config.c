@@ -36,7 +36,7 @@ function:    GPIO Write
 parameter:
 Info:
 ******************************************************************************/
-void DEV_Digital_Write(UWORD Pin, UBYTE Value)
+void DEV_Digital_Write(uint16_t Pin, uint8_t Value)
 {
     bcm2835_gpio_write(Pin, Value);
 }
@@ -46,9 +46,9 @@ function:    GPIO Read
 parameter:
 Info:
 ******************************************************************************/
-UBYTE DEV_Digital_Read(UWORD Pin)
+uint8_t DEV_Digital_Read(uint16_t Pin)
 {
-    UBYTE Read_Value = 0;
+    uint8_t Read_Value = 0;
     Read_Value = bcm2835_gpio_lev(Pin);
     return Read_Value;
 }
@@ -58,7 +58,7 @@ function:    SPI Write
 parameter:
 Info:
 ******************************************************************************/
-void DEV_SPI_WriteByte(UBYTE Value)
+void DEV_SPI_WriteByte(uint8_t Value)
 {
     bcm2835_spi_transfer(Value);
 }
@@ -68,9 +68,9 @@ function:    SPI Read
 parameter:
 Info:
 ******************************************************************************/
-UBYTE DEV_SPI_ReadByte()
+uint8_t DEV_SPI_ReadByte()
 {
-    UBYTE Read_Value = 0x00;
+    uint8_t Read_Value = 0x00;
     Read_Value = bcm2835_spi_transfer(0x00);
     return Read_Value;
 }
@@ -80,7 +80,7 @@ function:    Time delay for ms
 parameter:
 Info:
 ******************************************************************************/
-void DEV_Delay_ms(UDOUBLE xms)
+void DEV_Delay_ms(uint32_t xms)
 {
     bcm2835_delay(xms);
 }
@@ -91,7 +91,7 @@ function:    Time delay for us
 parameter:
 Info:
 ******************************************************************************/
-void DEV_Delay_us(UDOUBLE xus)
+void DEV_Delay_us(uint32_t xus)
 {
     bcm2835_delayMicroseconds(xus);
 }
@@ -104,7 +104,7 @@ void DEV_Delay_us(UDOUBLE xus)
 /**
  * GPIO Mode
 **/
-static void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
+static void DEV_GPIO_Mode(uint16_t Pin, uint16_t Mode)
 {
     if(Mode == 0 || Mode == BCM2835_GPIO_FSEL_INPT) {
         bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
@@ -133,7 +133,7 @@ function:    Module Initialize, the library and initialize the pins, SPI protoco
 parameter:
 Info:
 ******************************************************************************/
-UBYTE DEV_Module_Init(void)
+uint8_t DEV_Module_Init(void)
 {
     Debug("/***********************************/ \r\n");
 

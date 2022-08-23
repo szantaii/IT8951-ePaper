@@ -15,12 +15,12 @@
 
 #define USE_Touch_Panel false
 
-UWORD VCOM = 2510;
+uint16_t VCOM = 2510;
 
 IT8951_Dev_Info Dev_Info = {0, 0};
-UWORD Panel_Width;
-UWORD Panel_Height;
-UDOUBLE Init_Target_Memory_Addr;
+uint16_t Panel_Width;
+uint16_t Panel_Height;
+uint32_t Init_Target_Memory_Addr;
 int epd_mode = 0;    //0: no rotate, no mirror
                     //1: no rotate, horizontal mirror, for 10.3inch
                     //2: no totate, horizontal mirror, for 5.17inch
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
     double temp;
     sscanf(argv[1],"%lf",&temp);
-    VCOM = (UWORD)(fabs(temp)*1000);
+    VCOM = (uint16_t)(fabs(temp)*1000);
     Debug("VCOM value:%d\r\n", VCOM);
     sscanf(argv[2],"%d",&epd_mode);
     Debug("Display mode:%d\r\n", epd_mode);
