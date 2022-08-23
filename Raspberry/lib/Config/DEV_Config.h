@@ -59,16 +59,13 @@
 
 #include <bcm2835.h>
 
-
 /**
  * GPIO
  **/
 
-#define EPD_RST_PIN  17
-#define EPD_CS_PIN   8
+#define EPD_RST_PIN 17
+#define EPD_CS_PIN 8
 #define EPD_BUSY_PIN 24
-
-
 
 /*------------------------------------------------------------------------------------------------------*/
 void DEV_Digital_Write(uint16_t Pin, uint8_t Value);
@@ -82,6 +79,5 @@ void DEV_Delay_us(uint32_t xus);
 
 uint8_t DEV_Module_Init(void);
 void DEV_Module_Exit(void);
-
 
 #endif

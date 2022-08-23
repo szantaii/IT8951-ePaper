@@ -30,7 +30,6 @@
 #include "DEV_Config.h"
 #include <fcntl.h>
 
-
 /******************************************************************************
 function:    GPIO Write
 parameter:
@@ -50,6 +49,7 @@ uint8_t DEV_Digital_Read(uint16_t Pin)
 {
     uint8_t Read_Value = 0;
     Read_Value = bcm2835_gpio_lev(Pin);
+
     return Read_Value;
 }
 
@@ -72,6 +72,7 @@ uint8_t DEV_SPI_ReadByte()
 {
     uint8_t Read_Value = 0x00;
     Read_Value = bcm2835_spi_transfer(0x00);
+
     return Read_Value;
 }
 
@@ -85,7 +86,6 @@ void DEV_Delay_ms(uint32_t xms)
     bcm2835_delay(xms);
 }
 
-
 /******************************************************************************
 function:    Time delay for us
 parameter:
@@ -96,27 +96,24 @@ void DEV_Delay_us(uint32_t xus)
     bcm2835_delayMicroseconds(xus);
 }
 
-
-
-
-
-
 /**
  * GPIO Mode
-**/
+ **/
 static void DEV_GPIO_Mode(uint16_t Pin, uint16_t Mode)
 {
-    if(Mode == 0 || Mode == BCM2835_GPIO_FSEL_INPT) {
+    if (Mode == 0 || Mode == BCM2835_GPIO_FSEL_INPT)
+    {
         bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
-    } else {
+    }
+    else
+    {
         bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_OUTP);
     }
 }
 
-
 /**
  * GPIO Init
-**/
+ **/
 static void DEV_GPIO_Init(void)
 {
     DEV_GPIO_Mode(EPD_RST_PIN, BCM2835_GPIO_FSEL_OUTP);
@@ -125,8 +122,6 @@ static void DEV_GPIO_Init(void)
 
     DEV_Digital_Write(EPD_CS_PIN, HIGH);
 }
-
-
 
 /******************************************************************************
 function:    Module Initialize, the library and initialize the pins, SPI protocol
@@ -137,29 +132,32 @@ uint8_t DEV_Module_Init(void)
 {
     Debug("/***********************************/ \r\n");
 
-    if(!bcm2835_init()) {
+    if (!bcm2835_init())
+    {
         Debug("bcm2835 init failed  !!! \r\n");
+
         return 1;
-    } else {
+    }
+    else
+    {
         Debug("bcm2835 init success !!! \r\n");
     }
 
-    bcm2835_spi_begin();                                         //Start spi interface, set spi pin for the reuse function
-    bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);     //High first transmission
-    bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);                  //spi mode 0
-    //bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);   //For RPi3/3B/3B+
-    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32);   //For RPi 4
+    bcm2835_spi_begin();                                     // Start spi interface, set spi pin for the reuse function
+    bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST); // High first transmission
+    bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);              // spi mode 0
+    // bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);   //For RPi3/3B/3B+
+    bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_32); // For RPi 4
     /* SPI clock reference link：*/
     /*http://www.airspayce.com/mikem/bcm2835/group__constants.html#gaf2e0ca069b8caef24602a02e8a00884e*/
 
-    //GPIO Config
+    // GPIO Config
     DEV_GPIO_Init();
 
     Debug("/***********************************/ \r\n");
+
     return 0;
 }
-
-
 
 /******************************************************************************
 function:    Module exits, closes SPI and BCM2835 library

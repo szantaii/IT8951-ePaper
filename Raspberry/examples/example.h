@@ -4,7 +4,6 @@
 #include "../lib/e-Paper/EPD_IT8951.h"
 #include "../lib/Config/DEV_Config.h"
 
-
 // 1 bit per pixel, which is 2 grayscale
 #define BitsPerPixel_1 1
 // 2 bit per pixel, which is 4 grayscale
@@ -14,11 +13,10 @@
 // 8 bit per pixel, which is 256 grayscale, but will automatically reduce by hardware to 4bpp, which is 16 grayscale
 #define BitsPerPixel_8 8
 
-
-//For all refresh fram buf except touch panel
+// For all refresh fram buf except touch panel
 extern uint8_t *Refresh_Frame_Buf;
 
-//Only for touch panel
+// Only for touch panel
 extern uint8_t *Panel_Frame_Buf;
 extern uint8_t *Panel_Area_Frame_Buf;
 

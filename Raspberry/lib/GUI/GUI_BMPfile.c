@@ -42,215 +42,250 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdint.h>
-#include <stdlib.h>//exit()
-#include <string.h>//memset()
-#include <math.h>//memset()
+#include <stdlib.h> //exit()
+#include <string.h> //memset()
+#include <math.h>   //memset()
 #include <stdio.h>
 
-
-//global variables related to BMP picture display
+// global variables related to BMP picture display
 uint8_t *bmp_dst_buf = NULL;
 uint8_t *bmp_src_buf = NULL;
 uint32_t bmp_width, bmp_height;
-uint8_t  bmp_BitCount;
+uint8_t bmp_BitCount;
 uint32_t bytesPerLine;
 uint32_t imageSize;
 uint32_t skip;
-BMPRGBQUAD  palette[256];
+BMPRGBQUAD palette[256];
+
 extern uint8_t isColor;
 
-static void Bitmap_format_Matrix(uint8_t *dst,uint8_t *src)
+static void Bitmap_format_Matrix(uint8_t *dst, uint8_t *src)
 {
-    uint32_t i,j,k;
+    uint32_t i, j, k;
     uint8_t *psrc = src;
     uint8_t *pdst = dst;
     uint8_t *p = psrc;
     uint8_t temp;
     uint32_t count;
 
-    //Since the bmp storage is from the back to the front, it needs to be converted in reverse order.
-    switch(bmp_BitCount)
+    // Since the bmp storage is from the back to the front, it needs to be converted in reverse order.
+    switch (bmp_BitCount)
     {
-        case 1:
-            pdst += (bmp_width * bmp_height);
+    case 1:
+        pdst += (bmp_width * bmp_height);
 
-            for(i=0;i<bmp_height;i++)
+        for (i = 0; i < bmp_height; i++)
+        {
+            pdst -= bmp_width;
+            count = 0;
+
+            for (j = 0; j < (bmp_width + 7) / 8; j++)
             {
-                pdst -= bmp_width;
-                count = 0;
-                for (j=0;j<(bmp_width+7)/8;j++)
-                {
-                    temp = p[j];
+                temp = p[j];
 
-                    for (k=0;k<8;k++)
-                    {
-                        pdst[0]= ((temp & (0x80>>k)) >> (7-k));
-                        count++;
-                        pdst++;
-                        if (count == bmp_width)
-                        {
-                            break;
-                        }
-                    }
-                }
-                pdst -= bmp_width;
-                p += bytesPerLine;
-            }
-        break;
-        case 4:
-            pdst += (bmp_width * bmp_height);
-
-            for(i=0;i<bmp_height;i++)
-            {
-                pdst -= bmp_width;
-                count = 0;
-                for (j=0;j<(bmp_width+1)/2;j++)
+                for (k = 0; k < 8; k++)
                 {
-                    temp = p[j];
-                    pdst[0]= ((temp & 0xf0) >> 4);
+                    pdst[0] = ((temp & (0x80 >> k)) >> (7 - k));
                     count++;
                     pdst++;
-                    if (count == bmp_width)
-                    {
-                        break;
-                    }
 
-                    pdst[0] = temp & 0x0f;
-                    count++;
-                    pdst++;
                     if (count == bmp_width)
                     {
                         break;
                     }
                 }
-                pdst -= bmp_width;
-                p += bytesPerLine;
             }
-        break;
-        case 8:
-            pdst += (bmp_width*bmp_height);
-            for(i=0;i<bmp_height;i++)
-            {
-                p = psrc+(i+1)*bytesPerLine;
-                p -= skip;
-                for(j=0;j<bmp_width;j++)
-                {
-                    pdst -= 1;
-                    p -= 1;
-                    pdst[0] = p[0];
-                }
-            }
-        break;
-        case 16:
-            pdst += (bmp_width*bmp_height*2);
-            for(i=0;i<bmp_height;i++)
-            {
-                p = psrc+(i+1)*bytesPerLine;
-                p -= skip;
-                for(j=0;j<bmp_width;j++)
-                {
-                    pdst -= 2;
-                    p -= 2;
-                    pdst[0] = p[1];
-                    pdst[1] = p[0];
-                }
-            }
-        break;
-        case 24:
-            pdst += (bmp_width*bmp_height*3);
-            for(i=0;i<bmp_height;i++)
-            {
-                p = psrc+(i+1)*bytesPerLine;
-                p -= skip;
-                for(j=0;j<bmp_width;j++)
-                {
-                    pdst -= 3;
-                    p -= 3;
-                    pdst[0] = p[2];
-                    pdst[1] = p[1];
-                    pdst[2] = p[0];
-                }
-            }
-        break;
-        case 32:
-            pdst += (bmp_width*bmp_height*4);
-            for(i=0;i<bmp_height;i++)
-            {
-                p = psrc+(i+1)*bmp_width*4;
-                for(j=0;j<bmp_width;j++)
-                {
-                    pdst -= 4;
-                    p -= 4;
-                    pdst[0] = p[2];
-                    pdst[1] = p[1];
-                    pdst[2] = p[0];
-                    pdst[3] = p[3];
-                }
-            }
+
+            pdst -= bmp_width;
+            p += bytesPerLine;
+        }
+
         break;
 
-        default:
+    case 4:
+        pdst += (bmp_width * bmp_height);
+
+        for (i = 0; i < bmp_height; i++)
+        {
+            pdst -= bmp_width;
+            count = 0;
+
+            for (j = 0; j < (bmp_width + 1) / 2; j++)
+            {
+                temp = p[j];
+                pdst[0] = ((temp & 0xf0) >> 4);
+                count++;
+                pdst++;
+
+                if (count == bmp_width)
+                {
+                    break;
+                }
+
+                pdst[0] = temp & 0x0f;
+                count++;
+                pdst++;
+
+                if (count == bmp_width)
+                {
+                    break;
+                }
+            }
+
+            pdst -= bmp_width;
+            p += bytesPerLine;
+        }
+
+        break;
+
+    case 8:
+        pdst += (bmp_width * bmp_height);
+
+        for (i = 0; i < bmp_height; i++)
+        {
+            p = psrc + (i + 1) * bytesPerLine;
+            p -= skip;
+
+            for (j = 0; j < bmp_width; j++)
+            {
+                pdst -= 1;
+                p -= 1;
+                pdst[0] = p[0];
+            }
+        }
+
+        break;
+
+    case 16:
+        pdst += (bmp_width * bmp_height * 2);
+
+        for (i = 0; i < bmp_height; i++)
+        {
+            p = psrc + (i + 1) * bytesPerLine;
+            p -= skip;
+
+            for (j = 0; j < bmp_width; j++)
+            {
+                pdst -= 2;
+                p -= 2;
+                pdst[0] = p[1];
+                pdst[1] = p[0];
+            }
+        }
+
+        break;
+
+    case 24:
+        pdst += (bmp_width * bmp_height * 3);
+
+        for (i = 0; i < bmp_height; i++)
+        {
+            p = psrc + (i + 1) * bytesPerLine;
+            p -= skip;
+
+            for (j = 0; j < bmp_width; j++)
+            {
+                pdst -= 3;
+                p -= 3;
+                pdst[0] = p[2];
+                pdst[1] = p[1];
+                pdst[2] = p[0];
+            }
+        }
+
+        break;
+
+    case 32:
+        pdst += (bmp_width * bmp_height * 4);
+
+        for (i = 0; i < bmp_height; i++)
+        {
+            p = psrc + (i + 1) * bmp_width * 4;
+
+            for (j = 0; j < bmp_width; j++)
+            {
+                pdst -= 4;
+                p -= 4;
+                pdst[0] = p[2];
+                pdst[1] = p[1];
+                pdst[2] = p[0];
+                pdst[3] = p[3];
+            }
+        }
+
+        break;
+
+    default:
         break;
     }
 }
 
-static void DrawMatrix(uint16_t Xpos, uint16_t Ypos,uint16_t Width, uint16_t High,const uint8_t* Matrix)
+static void DrawMatrix(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t High, const uint8_t *Matrix)
 {
-    uint16_t i,j,x,y;
-    uint8_t R,G,B;
-    uint8_t temp1,temp2;
+    uint16_t i, j, x, y;
+    uint8_t R, G, B;
+    uint8_t temp1, temp2;
     double Gray;
 
-    for (y=0,j=Ypos;y<High;y++,j++)
+    for (y = 0, j = Ypos; y < High; y++, j++)
     {
-         for (x=0,i=Xpos;x<Width;x++,i++)
+        for (x = 0, i = Xpos; x < Width; x++, i++)
         {
-            switch(bmp_BitCount)
+            switch (bmp_BitCount)
             {
-                case 1:
-                case 4:
-                case 8:
-                    R = palette[Matrix[(y*Width+x)]].rgbRed;
-                    G = palette[Matrix[(y*Width+x)]].rgbGreen;
-                    B = palette[Matrix[(y*Width+x)]].rgbBlue;
+            case 1:
+            case 4:
+            case 8:
+                R = palette[Matrix[(y * Width + x)]].rgbRed;
+                G = palette[Matrix[(y * Width + x)]].rgbGreen;
+                B = palette[Matrix[(y * Width + x)]].rgbBlue;
+
                 break;
 
-                case 16:
-                    temp1 = Matrix[(y*Width+x)*2];
-                    temp2 = Matrix[(y*Width+x)*2+1];
-                    R = (temp1 & 0x7c)<<1;
-                    G = (((temp1 & 0x03) << 3 ) | ((temp2&0xe0) >> 5))<<3;
-                    B = (temp2 & 0x1f)<<3;
+            case 16:
+                temp1 = Matrix[(y * Width + x) * 2];
+                temp2 = Matrix[(y * Width + x) * 2 + 1];
+                R = (temp1 & 0x7c) << 1;
+                G = (((temp1 & 0x03) << 3) | ((temp2 & 0xe0) >> 5)) << 3;
+                B = (temp2 & 0x1f) << 3;
+
                 break;
 
-                case 24:
-                    R = Matrix[(y*Width+x)*3];
-                    G = Matrix[(y*Width+x)*3+1];
-                    B = Matrix[(y*Width+x)*3+2];
+            case 24:
+                R = Matrix[(y * Width + x) * 3];
+                G = Matrix[(y * Width + x) * 3 + 1];
+                B = Matrix[(y * Width + x) * 3 + 2];
+
                 break;
 
-                case 32:
-                    R = Matrix[(y*Width+x)*4];
-                    G = Matrix[(y*Width+x)*4+1];
-                    B = Matrix[(y*Width+x)*4+2];
+            case 32:
+                R = Matrix[(y * Width + x) * 4];
+                G = Matrix[(y * Width + x) * 4 + 1];
+                B = Matrix[(y * Width + x) * 4 + 2];
+
                 break;
 
-                default:
+            default:
                 break;
             }
 
-            Gray = (R*299 + G*587 + B*114 + 500) / 1000;
-            if(isColor && i%3==2)
-                Paint_SetPixel(i, j, Gray/2);
+            Gray = (R * 299 + G * 587 + B * 114 + 500) / 1000;
+
+            if (isColor && i % 3 == 2)
+            {
+                Paint_SetPixel(i, j, Gray / 2);
+            }
             else
+            {
                 Paint_SetPixel(i, j, Gray);
+            }
         }
     }
 }
 
 uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y)
 {
-    //bmp file pointer
+    // bmp file pointer
     FILE *fp;
     BMPFILEHEADER FileHead;
     BMPINFOHEADER InfoHead;
@@ -258,42 +293,48 @@ uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y)
     uint8_t *buf = NULL;
     uint32_t ret = -1;
 
-    fp = fopen(path,"rb");
+    fp = fopen(path, "rb");
+
     if (fp == NULL)
     {
-        return(-1);
+        return (-1);
     }
 
-    ret = fread(&FileHead, sizeof(BMPFILEHEADER),1, fp);
+    ret = fread(&FileHead, sizeof(BMPFILEHEADER), 1, fp);
+
     if (ret != 1)
     {
         Debug("Read header error!\n");
         fclose(fp);
-        return(-2);
+
+        return (-2);
     }
 
-    //Detect if it is a bmp image, since BMP file type is "BM"(0x4D42)
+    // Detect if it is a bmp image, since BMP file type is "BM"(0x4D42)
     if (FileHead.bType != 0x4D42)
     {
         Debug("It's not a BMP file\n");
         fclose(fp);
-        return(-3);
+
+        return (-3);
     }
 
     Debug("*****************************************\n");
     Debug("BMP_bSize:%d \n", FileHead.bSize);
-     Debug("BMP_bOffset:%d \n", FileHead.bOffset);
+    Debug("BMP_bOffset:%d \n", FileHead.bOffset);
 
-    ret = fread((char *)&InfoHead, sizeof(BMPINFOHEADER),1, fp);
+    ret = fread((char *)&InfoHead, sizeof(BMPINFOHEADER), 1, fp);
+
     if (ret != 1)
     {
         Debug("Read infoheader error!\n");
         fclose(fp);
-        return(-4);
+
+        return (-4);
     }
 
     Debug("BMP_biInfoSize:%d \n", InfoHead.biInfoSize);
-     Debug("BMP_biWidth:%d \n", InfoHead.biWidth);
+    Debug("BMP_biWidth:%d \n", InfoHead.biWidth);
     Debug("BMP_biHeight:%d \n", InfoHead.biHeight);
     Debug("BMP_biPlanes:%d \n", InfoHead.biPlanes);
     Debug("BMP_biBitCount:%d \n", InfoHead.biBitCount);
@@ -304,10 +345,10 @@ uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y)
     Debug("BMP_biClrUsed:%d \n", InfoHead.biClrUsed);
     Debug("BMP_biClrImportant:%d \n", InfoHead.biClrImportant);
 
-    total_length = FileHead.bSize-FileHead.bOffset;
-    bytesPerLine=((InfoHead.biWidth*InfoHead.biBitCount+31)>>5)<<2;
-    imageSize=bytesPerLine*InfoHead.biHeight;
-    skip=(4-((InfoHead.biWidth*InfoHead.biBitCount)>>3))&3;
+    total_length = FileHead.bSize - FileHead.bOffset;
+    bytesPerLine = ((InfoHead.biWidth * InfoHead.biBitCount + 31) >> 5) << 2;
+    imageSize = bytesPerLine * InfoHead.biHeight;
+    skip = (4 - ((InfoHead.biWidth * InfoHead.biBitCount) >> 3)) & 3;
 
     Debug("bimpImageSize:%d\n", InfoHead.bimpImageSize);
     Debug("total_length:%d\n", total_length);
@@ -320,99 +361,122 @@ uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y)
     bmp_height = InfoHead.biHeight;
     bmp_BitCount = InfoHead.biBitCount;
 
-    //This is old code, but allocate imageSize byte memory is more reasonable
-    bmp_src_buf = (uint8_t*)calloc(1,total_length);
-    //bmp_src_buf = (uint8_t*)calloc(1,imageSize);
-    if(bmp_src_buf == NULL){
+    // This is old code, but allocate imageSize byte memory is more reasonable
+    bmp_src_buf = (uint8_t *)calloc(1, total_length);
+    // bmp_src_buf = (uint8_t*)calloc(1,imageSize);
+
+    if (bmp_src_buf == NULL)
+    {
         Debug("Load > malloc bmp out of memory!\n");
+
         return -1;
     }
-    //This is old code, but allocate imageSize byte memory is more reasonable
-    bmp_dst_buf = (uint8_t*)calloc(1,total_length);
-    //bmp_dst_buf = (uint8_t*)calloc(1,imageSize);
-    if(bmp_dst_buf == NULL){
+
+    // This is old code, but allocate imageSize byte memory is more reasonable
+    bmp_dst_buf = (uint8_t *)calloc(1, total_length);
+    // bmp_dst_buf = (uint8_t*)calloc(1,imageSize);
+
+    if (bmp_dst_buf == NULL)
+    {
         Debug("Load > malloc bmp out of memory!\n");
+
         return -2;
     }
 
-     //Jump to data area
+    // Jump to data area
     fseek(fp, FileHead.bOffset, SEEK_SET);
 
-    //Bytes per line
+    // Bytes per line
     buf = bmp_src_buf;
-    while ((ret = fread(buf,1,total_length,fp)) >= 0)
+
+    while ((ret = fread(buf, 1, total_length, fp)) >= 0)
     {
         if (ret == 0)
         {
             DEV_Delay_us(100);
+
             continue;
         }
-        buf = ((uint8_t*)buf) + ret;
+
+        buf = ((uint8_t *)buf) + ret;
         total_length = total_length - ret;
-        if(total_length == 0)
+
+        if (total_length == 0)
+        {
             break;
+        }
     }
 
-    //Jump to color pattern board
-    switch(bmp_BitCount)
+    // Jump to color pattern board
+    switch (bmp_BitCount)
     {
-        case 1:
-            fseek(fp, 54, SEEK_SET);
-            ret = fread(palette,1,4*2,fp);
-            if (ret != 8)
-            {
-                Debug("Error: fread != 8\n");
-                return -5;
-            }
+    case 1:
+        fseek(fp, 54, SEEK_SET);
+        ret = fread(palette, 1, 4 * 2, fp);
 
-            //this is old code, will likely result in memory leak if use 1bp source bmp image
+        if (ret != 8)
+        {
+            Debug("Error: fread != 8\n");
 
-            bmp_dst_buf = (uint8_t*)calloc(1,InfoHead.biWidth * InfoHead.biHeight);
-            if(bmp_dst_buf == NULL)
-            {
-                Debug("Load > malloc bmp out of memory!\n");
-                return -5;
-            }
+            return -5;
+        }
 
-        break;
+        // this is old code, will likely result in memory leak if use 1bp source bmp image
 
-        case 4:
-            fseek(fp, 54, SEEK_SET);
-            ret = fread(palette,1,4*16,fp);
-            if (ret != 64)
-            {
-                Debug("Error: fread != 64\n");
-                return -5;
-            }
-            //this is old code, will likely result in memory leak if use 4bp source bmp image
+        bmp_dst_buf = (uint8_t *)calloc(1, InfoHead.biWidth * InfoHead.biHeight);
 
-            bmp_dst_buf = (uint8_t*)calloc(1,InfoHead.biWidth * InfoHead.biHeight);
-            if(bmp_dst_buf == NULL)
-            {
-                Debug("Load > malloc bmp out of memory!\n");
-                return -5;
-            }
+        if (bmp_dst_buf == NULL)
+        {
+            Debug("Load > malloc bmp out of memory!\n");
+
+            return -5;
+        }
 
         break;
 
-        case 8:
-            fseek(fp, 54, SEEK_SET);
+    case 4:
+        fseek(fp, 54, SEEK_SET);
+        ret = fread(palette, 1, 4 * 16, fp);
 
-            ret = fread(palette,1,4*256,fp);
+        if (ret != 64)
+        {
+            Debug("Error: fread != 64\n");
 
-            if (ret != 1024)
-            {
-                Debug("Error: fread != 1024\n");
-                return -5;
-            }
+            return -5;
+        }
+        // this is old code, will likely result in memory leak if use 4bp source bmp image
+
+        bmp_dst_buf = (uint8_t *)calloc(1, InfoHead.biWidth * InfoHead.biHeight);
+
+        if (bmp_dst_buf == NULL)
+        {
+            Debug("Load > malloc bmp out of memory!\n");
+
+            return -5;
+        }
+
         break;
 
-        default:
+    case 8:
+        fseek(fp, 54, SEEK_SET);
+
+        ret = fread(palette, 1, 4 * 256, fp);
+
+        if (ret != 1024)
+        {
+            Debug("Error: fread != 1024\n");
+
+            return -5;
+        }
+
+        break;
+
+    default:
         break;
     }
 
-    Bitmap_format_Matrix(bmp_dst_buf,bmp_src_buf);
-    DrawMatrix(x, y,InfoHead.biWidth, InfoHead.biHeight, bmp_dst_buf);
+    Bitmap_format_Matrix(bmp_dst_buf, bmp_src_buf);
+    DrawMatrix(x, y, InfoHead.biWidth, InfoHead.biHeight, bmp_dst_buf);
 
     free(bmp_src_buf);
     free(bmp_dst_buf);
@@ -421,5 +485,6 @@ uint8_t GUI_ReadBmp(const char *path, uint16_t x, uint16_t y)
     bmp_dst_buf = NULL;
 
     fclose(fp);
-    return(0);
+
+    return (0);
 }
