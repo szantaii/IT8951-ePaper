@@ -1,10 +1,10 @@
 /*****************************************************************************
-* | File      	:   EPD_IT8951.h
+* | File          :   EPD_IT8951.h
 * | Author      :   Waveshare team
 * | Function    :   IT8951 Common driver
 * | Info        :
 *----------------
-* |	This version:   V1.0
+* |    This version:   V1.0
 * | Date        :   2019-09-17
 * | Info        :
 * -----------------------------------------------------------------------------
@@ -95,7 +95,7 @@ IT8951 Command defines
 #define USDEF_I80_CMD_DPY_AREA     0x0034
 #define USDEF_I80_CMD_GET_DEV_INFO 0x0302
 #define USDEF_I80_CMD_DPY_BUF_AREA 0x0037
-#define USDEF_I80_CMD_VCOM		   0x0039
+#define USDEF_I80_CMD_VCOM           0x0039
 
 /*-----------------------------------------------------------------------
  IT8951 Mode defines

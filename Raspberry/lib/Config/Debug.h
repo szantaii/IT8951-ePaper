@@ -1,15 +1,15 @@
 /*****************************************************************************
-* | File      	:	Debug.h
+* | File          :    Debug.h
 * | Author      :   Waveshare team
-* | Function    :	debug with printf
+* | Function    :    debug with printf
 * | Info        :
 *   Image scanning
 *      Please use progressive scanning to generate images or fonts
 *----------------
-* |	This version:   V2.0
+* |    This version:   V2.0
 * | Date        :   2018-10-30
-* | Info        :   
-*   1.USE_DEBUG -> DEBUG, If you need to see the debug information, 
+* | Info        :
+*   1.USE_DEBUG -> DEBUG, If you need to see the debug information,
 *    clear the execution: make DEBUG=-DDEBUG
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,10 +38,9 @@
 #include <stdio.h>
 
 #if DEBUG
-	#define Debug(fmt,...) printf("%s[%d]:"fmt,__FILE__,__LINE__,##__VA_ARGS__)
+    #define Debug(fmt,...) printf("%s[%d]:"fmt,__FILE__,__LINE__,##__VA_ARGS__)
 #else
-	#define Debug(fmt,...) printf(fmt,##__VA_ARGS__)
+    #define Debug(fmt,...) printf(fmt,##__VA_ARGS__)
 #endif
 
 #endif
-

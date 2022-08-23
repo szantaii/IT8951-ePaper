@@ -1,19 +1,19 @@
 /******************************************************************************
-* | File      	:   GUI_Paint.c
+* | File          :   GUI_Paint.c
 * | Author      :   Waveshare electronics
-* | Function    :	Achieve drawing: draw points, lines, boxes, circles and
+* | Function    :    Achieve drawing: draw points, lines, boxes, circles and
 *                   their size, solid dotted line, solid rectangle hollow
 *                   rectangle, solid circle hollow circle.
 * | Info        :
 *   Achieve display characters: Display a single character, string, number
 *   Achieve time display: adaptive size display time minutes and seconds
 *----------------
-* |	This version:   V3.0
+* |    This version:   V3.0
 * | Date        :   2019-04-18
 * | Info        :
 * -----------------------------------------------------------------------------
 * V3.0(2019-04-18):
-* 1.Change: 
+* 1.Change:
 *    Paint_DrawPoint(..., DOT_STYLE DOT_STYLE)
 * => Paint_DrawPoint(..., DOT_STYLE Dot_Style)
 *    Paint_DrawLine(..., LINE_STYLE Line_Style, DOT_PIXEL Dot_Pixel)
@@ -30,16 +30,16 @@
 * 2.add: Paint_SelectImage()
 *    Select the picture to be drawn
 * 3.add: Paint_SetRotate()
-*    Set the direction of the cache    
-* 4.add: Paint_RotateImage() 
-*    Can flip the picture, Support 0-360 degrees, 
+*    Set the direction of the cache
+* 4.add: Paint_RotateImage()
+*    Can flip the picture, Support 0-360 degrees,
 *    but only 90.180.270 rotation is better
-* 4.add: Paint_SetMirroring() 
+* 4.add: Paint_SetMirroring()
 *    Can Mirroring the picture, horizontal, vertical, origin
-* 5.add: Paint_DrawString_CN() 
-*    Can display Chinese(GB1312)   
+* 5.add: Paint_DrawString_CN()
+*    Can display Chinese(GB1312)
 *
-* ----------------------------------------------------------------------------- 
+* -----------------------------------------------------------------------------
 * V1.0(2018-07-17):
 *   Create library
 *
@@ -91,10 +91,10 @@ void Paint_NewImage(UBYTE *image, UWORD Width, UWORD Height, UWORD Rotate, UWORD
     Paint.GrayScale = pow(2, Paint.BitsPerPixel);
     Paint.WidthByte = Width;
     Paint.HeightByte = Height;
-   
+
     Paint.Rotate = Rotate;
     Paint.Mirror = MIRROR_NONE;
-    
+
     if(Rotate == ROTATE_0 || Rotate == ROTATE_180) {
         Paint.Width = Width;
         Paint.Height = Height;
@@ -130,20 +130,20 @@ void Paint_SetRotate(UWORD Rotate)
 }
 
 /******************************************************************************
-function:	Select Image mirror
+function:    Select Image mirror
 parameter:
     mirror   :Not mirror,Horizontal mirror,Vertical mirror,Origin mirror
 ******************************************************************************/
 void Paint_SetMirroring(UBYTE mirror)
 {
-    if(mirror == MIRROR_NONE || mirror == MIRROR_HORIZONTAL || 
+    if(mirror == MIRROR_NONE || mirror == MIRROR_HORIZONTAL ||
         mirror == MIRROR_VERTICAL || mirror == MIRROR_ORIGIN) {
         Debug("mirror image x:%s, y:%s\r\n",(mirror & 0x01)? "mirror":"none", ((mirror >> 1) & 0x01)? "mirror":"none");
         Paint.Mirror = mirror;
     } else {
         Debug("mirror should be MIRROR_NONE, MIRROR_HORIZONTAL, \
         MIRROR_VERTICAL or MIRROR_ORIGIN\r\n");
-    }    
+    }
 }
 
 /******************************************************************************
@@ -178,13 +178,13 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
     if(Xpoint > Paint.Width || Ypoint > Paint.Height){
         //Debug("Exceeding display boundaries\r\n");
         return;
-    }      
+    }
     UWORD X, Y;
 
     switch(Paint.Rotate) {
     case 0:
         X = Xpoint;
-        Y = Ypoint;  
+        Y = Ypoint;
         break;
     case 90:
         X = Paint.WidthMemory - Ypoint - 1;
@@ -201,7 +201,7 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
     default:
         return;
     }
-    
+
     switch(Paint.Mirror) {
     case MIRROR_NONE:
         break;
@@ -251,37 +251,37 @@ void Paint_SetPixel(UWORD Xpoint, UWORD Ypoint, UWORD Color)
 
 void Paint_SetColor(UWORD x, UWORD y, UWORD color)
 {
-	UWORD arr_XY[2] = {x, y};
-	UBYTE arr_color[9];
-	UBYTE offset = x/3%3;
-	
-	if(x%3 != 1)
-		(x%3==0) ? (arr_XY[0]++) : (arr_XY[0]--);
-	if((y+2)%3 != 1)
-		((y+2)%3==0) ? (arr_XY[1]++) : (arr_XY[1]--);
-	arr_XY[1] -= offset;
-	
-	Paint_GetColor(color, arr_color);
-	for(UBYTE i=0; i<3; i++) {
-		for(UBYTE j=0; j<3; j++) {
-			Paint_SetPixel(arr_XY[0]-1+j, arr_XY[1]-1+i, arr_color[i*3+j]);
-		}
-	}
+    UWORD arr_XY[2] = {x, y};
+    UBYTE arr_color[9];
+    UBYTE offset = x/3%3;
+
+    if(x%3 != 1)
+        (x%3==0) ? (arr_XY[0]++) : (arr_XY[0]--);
+    if((y+2)%3 != 1)
+        ((y+2)%3==0) ? (arr_XY[1]++) : (arr_XY[1]--);
+    arr_XY[1] -= offset;
+
+    Paint_GetColor(color, arr_color);
+    for(UBYTE i=0; i<3; i++) {
+        for(UBYTE j=0; j<3; j++) {
+            Paint_SetPixel(arr_XY[0]-1+j, arr_XY[1]-1+i, arr_color[i*3+j]);
+        }
+    }
 }
 
 void Paint_GetColor(UWORD color, UBYTE* arr_color)
 {
-	UBYTE* p_color = arr_color;
-	UWORD R, G, B;
+    UBYTE* p_color = arr_color;
+    UWORD R, G, B;
 
-	B = (color>>4) & 0xf0;
-	G =  color	   & 0xf0;
-	R = (color<<4) & 0xf0;
-	UBYTE temp[9] = {G, G, G/2, B, B, B/2, R, R, R/2};
-	
-	for(UBYTE t=0; t<9; t++) {
-		p_color[t] = temp[t];
-	}
+    B = (color>>4) & 0xf0;
+    G =  color       & 0xf0;
+    R = (color<<4) & 0xf0;
+    UBYTE temp[9] = {G, G, G/2, B, B, B/2, R, R, R/2};
+
+    for(UBYTE t=0; t<9; t++) {
+        p_color[t] = temp[t];
+    }
 }
 
 /******************************************************************************
@@ -316,11 +316,11 @@ void Paint_ClearWindows(UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend, UWOR
 /******************************************************************************
 function: Draw Point(Xpoint, Ypoint) Fill the color
 parameter:
-    Xpoint		: The Xpoint coordinate of the point
-    Ypoint		: The Ypoint coordinate of the point
-    Color		: Painted color
-    Dot_Pixel	: point size
-    Dot_Style	: point Style
+    Xpoint        : The Xpoint coordinate of the point
+    Ypoint        : The Ypoint coordinate of the point
+    Color        : Painted color
+    Dot_Pixel    : point size
+    Dot_Style    : point Style
 ******************************************************************************/
 void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color,
                      DOT_PIXEL Dot_Pixel, DOT_STYLE Dot_Style)
@@ -337,19 +337,19 @@ void Paint_DrawPoint(UWORD Xpoint, UWORD Ypoint, UWORD Color,
                 if(Xpoint + XDir_Num - Dot_Pixel < 0 || Ypoint + YDir_Num - Dot_Pixel < 0)
                     break;
                 // Debug("x = %d, y = %d\r\n", Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel);
-				if(isColor)
-					Paint_SetColor(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
+                if(isColor)
+                    Paint_SetColor(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
                 else
-					Paint_SetPixel(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
+                    Paint_SetPixel(Xpoint + XDir_Num - Dot_Pixel, Ypoint + YDir_Num - Dot_Pixel, Color);
             }
         }
     } else {
         for (XDir_Num = 0; XDir_Num <  Dot_Pixel; XDir_Num++) {
             for (YDir_Num = 0; YDir_Num <  Dot_Pixel; YDir_Num++) {
-				if(isColor)
-					Paint_SetColor(Xpoint + XDir_Num - 1, Ypoint + YDir_Num - 1, Color);
-				else
-					Paint_SetPixel(Xpoint + XDir_Num - 1, Ypoint + YDir_Num - 1, Color);
+                if(isColor)
+                    Paint_SetColor(Xpoint + XDir_Num - 1, Ypoint + YDir_Num - 1, Color);
+                else
+                    Paint_SetPixel(Xpoint + XDir_Num - 1, Ypoint + YDir_Num - 1, Color);
             }
         }
     }
@@ -566,7 +566,7 @@ void Paint_DrawChar(UWORD Xpoint, UWORD Ypoint, const char Acsii_Char,
 }
 
 /******************************************************************************
-function:	Display the string
+function:    Display the string
 parameter:
     Xstart           ：X coordinate
     Ystart           ：Y coordinate
@@ -706,7 +706,7 @@ void Paint_DrawString_CN(UWORD Xstart, UWORD Ystart, const char * pString, cFONT
 }
 
 /******************************************************************************
-function:	Display nummber
+function:    Display nummber
 parameter:
     Xstart           ：X coordinate
     Ystart           : Y coordinate
@@ -748,7 +748,7 @@ void Paint_DrawNum(UWORD Xpoint, UWORD Ypoint, int32_t Nummber,
 }
 
 /******************************************************************************
-function:	Display time
+function:    Display time
 parameter:
     Xstart           ：X coordinate
     Ystart           : Y coordinate
